@@ -30,7 +30,7 @@ class API(object):
         url = "{baseurl}/repos/{owner}/{repo}/issues".format(baseurl=self.baseurl, owner=self.user, repo=self.project)
         data= json.dumps(kwargs)
         print(data)
-        return requests.post(url, data = data, auth = (self.user, self.password))
+        return self.session.post(url, data = data)
 
     def generate_oauth(self):
         """Get a github OAUTH token and write it to a file"""
@@ -41,7 +41,7 @@ class API(object):
                 'client_secret': 'd058a0cda5851dd3c85bc53c1fb026f64cfdd2ea'
                }
 
-        resp = requests.post(url, data=json.dumps(data), auth = (self.user, self.password))
+        resp = self.session.post(url, data=json.dumps(data))
         resp = resp.json()
 
         token = resp['token']
