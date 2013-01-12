@@ -12,22 +12,25 @@ class API(object):
         # Handle different authorization methods
         if token:
             auth = "token %s" % token
-            self.session = requests.session(headers={'Authorization': auth})
+            self.session = requests.Session()
+            self.session.headers = {'Authorization': auth}
         elif user and password:
             self.session = requests.Session()
             self.session.auth = (user, password)
-            self.project = project
             self.user = user
+            self.password = password
         else:
             with open(tokenpath, 'r') as tokenfile:
                 token = tokenfile.read()
-                self.session = requests.session(headers={'Authorization': auth})
+                auth = "token %s" % token
+                self.session = requests.Session()
+                self.session.headers = {'Authorization': auth}
 
-        self.password = password
+        self.project = project
 
     def create_issue(self, **kwargs):
         # TODO: is owner the same as user?
-        url = "{baseurl}/repos/{owner}/{repo}/issues".format(baseurl=self.baseurl, owner=self.user, repo=self.project)
+        url = "{baseurl}/repos/{repo}/issues".format(baseurl=self.baseurl, repo=self.project)
         data= json.dumps(kwargs)
         print(data)
         return self.session.post(url, data = data)
